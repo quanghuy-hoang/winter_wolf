@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:gal/gal.dart';
 
-Future<void> saveImageFromRepaintBoundaryToGallery(
+Future<Uint8List?> createImageDataFromRepaintBoundary(
   GlobalKey boundaryKey, {
   double? pixelRatio,
   Size? imageSize,
@@ -26,8 +26,9 @@ Future<void> saveImageFromRepaintBoundaryToGallery(
   final ByteData? byteData = await image.toByteData(
     format: ui.ImageByteFormat.png,
   );
-  final Uint8List? imageData = byteData?.buffer.asUint8List();
-  if (imageData != null) {
-    await Gal.putImageBytes(imageData);
-  }
+  return byteData?.buffer.asUint8List();
+}
+
+Future<void> saveImageDataToGallery(Uint8List imageData) async {
+  await Gal.putImageBytes(imageData);
 }

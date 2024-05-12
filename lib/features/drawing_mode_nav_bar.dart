@@ -7,11 +7,11 @@ import '../utils/my_widgets.dart';
 enum DrawingMode { drawLine, erase, sticker, paint, drawPoint }
 
 class DrawingModeNavBar extends StatelessWidget {
-  final SettingsProvider settings;
-  const DrawingModeNavBar(this.settings, {super.key});
+  const DrawingModeNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    SettingsProvider settings = context.watch<SettingsProvider>();
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [

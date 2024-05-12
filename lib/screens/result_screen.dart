@@ -10,6 +10,12 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: SafeArea(
+        child: Container(
+          color: Colors.red,
+        ),
+      ),
+    );
   }
 }
