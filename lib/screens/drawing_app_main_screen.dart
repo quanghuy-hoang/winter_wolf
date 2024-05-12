@@ -1,9 +1,7 @@
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:winter_wolf/features/canvas_zone.dart';
-import 'package:winter_wolf/models/settings.dart';
+import 'package:winter_wolf/screens/result_screen.dart';
 import 'package:winter_wolf/utils/save_to_gallery.dart';
 import '../features/action_bar.dart';
 import '../features/drawing_mode_nav_bar.dart';
@@ -35,17 +33,30 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   MyTextButton(
-                      text: "save",
-                      onPressed: () async {
-                        Uint8List? imageData =
-                            await createImageDataFromRepaintBoundary(
-                          _key,
-                          context: context,
-                        );
-                        if (imageData != null) {
-                          showSaveToGalleryAlert(imageData);
-                        }
-                      }),
+                    text: "test 2",
+                    onPressed: () async {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ResultScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  const Spacer(),
+                  MyTextButton(
+                    text: "save",
+                    onPressed: () async {
+                      Uint8List? imageData =
+                          await createImageDataFromRepaintBoundary(
+                        _key,
+                        context: context,
+                      );
+                      if (imageData != null) {
+                        showSaveToGalleryAlert(imageData);
+                      }
+                    },
+                  ),
                 ],
               ),
               const SizedBox(height: 16),
