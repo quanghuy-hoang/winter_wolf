@@ -28,9 +28,9 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
     final double deviceWidth = MediaQuery.of(context).size.width;
     const double canvasPadding = 64.0;
     final double canvasSize = deviceWidth - canvasPadding;
-    return SafeArea(
-      child: Scaffold(
-        body: Padding(
+    return Scaffold(
+      body: SafeArea(
+        child: Padding(
           padding: const EdgeInsets.all(32.0),
           child: Column(
             children: [
@@ -232,26 +232,27 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
   }
 
   Widget buildActionBar() {
+    PaintingProvider painting = context.watch<PaintingProvider>();
     if (context.watch<SettingsProvider>().mode == DrawingMode.sticker) {
       return Row(
         children: [
           const Spacer(),
-          buildClearScreenButton(),
+          buildClearScreenButton(painting),
         ],
       );
     }
+
     return Row(
       children: [
-        buildUndoButton(),
-        buildRedoButton(),
+        buildUndoButton(painting),
+        buildRedoButton(painting),
         const Spacer(),
-        buildClearScreenButton(),
+        buildClearScreenButton(painting),
       ],
     );
   }
 
-  Widget buildClearScreenButton() {
-    PaintingProvider painting = context.read<PaintingProvider>();
+  Widget buildClearScreenButton(PaintingProvider painting) {
     return MyTextButton(
       text: "clear screen",
       onPressed:
@@ -263,27 +264,25 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
     );
   }
 
-  Widget buildUndoButton() {
-    PaintingProvider painting = context.read<PaintingProvider>();
+  Widget buildUndoButton(PaintingProvider painting) {
     return MyTextButton(
       text: "undo",
       onPressed: painting.lines.isNotEmpty
           ? () {
-              painting.addUndoLine(painting.lines.last);
-              painting.removeLastLine();
+              context.read<PaintingProvider>().addUndoLine(painting.lines.last);
+              context.read<PaintingProvider>().removeLastLine();
             }
           : null,
     );
   }
 
-  Widget buildRedoButton() {
-    PaintingProvider painting = context.read<PaintingProvider>();
+  Widget buildRedoButton(PaintingProvider painting) {
     return MyTextButton(
       text: "redo",
       onPressed: painting.undoStack.isNotEmpty
           ? () {
-              painting.addLine(painting.undoStack.last);
-              painting.removeLastUndoLine();
+              context.read<PaintingProvider>().addLine(painting.undoStack.last);
+              context.read<PaintingProvider>().removeLastUndoLine();
             }
           : null,
     );
