@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 import 'package:winter_wolf/features/canvas_zone.dart';
 import 'package:winter_wolf/features/my_sticker.dart';
@@ -8,7 +9,7 @@ import 'package:winter_wolf/models/painting.dart';
 import 'package:winter_wolf/models/settings.dart';
 import 'package:winter_wolf/utils/save_to_gallery.dart';
 import '../features/drawing_mode_nav_bar.dart';
-import '../features/brush_settings_dialog.dart';
+import '../features/swatch_picker.dart';
 import '../utils/my_widgets.dart';
 
 class DrawingAppMainScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
       case DrawingMode.drawLine || DrawingMode.drawPoint:
         return buildToolLayout(
           smallTool: buildBrushSizeSlider(),
-          bigTool: buildSwatchPicker(settings),
+          bigTool: SwatchPicker(settings: settings),
         );
       case DrawingMode.erase:
         return buildToolLayout(
@@ -118,7 +119,7 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
       case DrawingMode.paint:
         return buildToolLayout(
           smallTool: null,
-          bigTool: buildSwatchPicker(settings),
+          bigTool: SwatchPicker(settings: settings),
         );
       case DrawingMode.sticker:
         return buildToolLayout(
@@ -176,7 +177,7 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
       child: Column(
         children: [
           SizedBox(
-            height: 48,
+            height: 60,
             child: smallTool,
           ),
           const SizedBox(height: 8),
@@ -202,61 +203,31 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
             ),
             child: Consumer<SettingsProvider>(
               builder: (context, painting, child) {
-                return Slider(
-                  label: painting.brushSize.floor().toString(),
-                  value: painting.brushSize,
-                  min: 5,
-                  max: MediaQuery.of(context).size.width / 5,
-                  onChangeStart: (value) {
-                    painting.displayBrushPreview = true;
-                  },
-                  onChanged: (value) {
-                    painting.brushSize = value;
-                  },
-                  onChangeEnd: (value) {
-                    painting.displayBrushPreview = false;
-                  },
+                return Animate(
+                  effects: const [
+                    FadeEffect(duration: Duration(milliseconds: 200))
+                  ],
+                  child: Slider(
+                    label: painting.brushSize.floor().toString(),
+                    value: painting.brushSize,
+                    min: 5,
+                    max: MediaQuery.of(context).size.width / 5,
+                    onChangeStart: (value) {
+                      painting.displayBrushPreview = true;
+                    },
+                    onChanged: (value) {
+                      painting.brushSize = value;
+                    },
+                    onChangeEnd: (value) {
+                      painting.displayBrushPreview = false;
+                    },
+                  ),
                 );
               },
             ),
           ),
         ),
       ],
-    );
-  }
-
-  Widget buildSwatchPicker(SettingsProvider settings) {
-    List<Widget> swatchPickerList = [
-      ...settings.swatchList.map((color) =>
-          Consumer<SettingsProvider>(builder: (context, painting, child) {
-            return MySwatch(
-              color: color,
-              isSelected: color == painting.brushColor,
-              onPressed: () {
-                painting.brushColor = color;
-              },
-              onLongPressed: () {
-                painting.removeSwatch(settings.swatchList.indexOf(color));
-              },
-            );
-          })),
-      buildAddSwatchButton()
-    ];
-
-    return Align(
-      alignment: Alignment.topCenter,
-      child: SizedBox(
-        height: 50,
-        child: ListView.separated(
-          shrinkWrap: true,
-          scrollDirection: Axis.horizontal,
-          itemBuilder: (context, index) => swatchPickerList[index],
-          separatorBuilder: (BuildContext context, int index) => const SizedBox(
-            width: 16,
-          ),
-          itemCount: swatchPickerList.length,
-        ),
-      ),
     );
   }
 
@@ -318,54 +289,38 @@ class _DrawingAppMainScreenState extends State<DrawingAppMainScreen> {
     );
   }
 
-  Widget buildAddSwatchButton() {
-    return MyRoundButton(
-      onPressed: () {
-        showColorPicker();
-      },
-      child: const Icon(Icons.add),
-    );
-  }
-
   Widget buildStickerList() {
     SettingsProvider settings = context.watch<SettingsProvider>();
 
-    return Scrollbar(
-      child: ListView.separated(
-        shrinkWrap: true,
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => DraggableSticker(
-          stickerOnCanvas: StickerOnCanvas(
-            sticker: MySticker(
-              size: MediaQuery.of(context).size.width / 4,
-              imagePath: settings.stickerList[index],
+    return Animate(
+      effects: const [
+        FadeEffect(),
+        SlideEffect(
+          begin: ui.Offset(0, 0.4),
+          duration: Duration(milliseconds: 300),
+        )
+      ],
+      child: Scrollbar(
+        child: ListView.separated(
+          shrinkWrap: true,
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (context, index) => DraggableSticker(
+            stickerOnCanvas: StickerOnCanvas(
+              sticker: MySticker(
+                size: MediaQuery.of(context).size.width / 4,
+                imagePath: settings.stickerList[index],
+              ),
+              position: const ui.Offset(0, 0),
+              scale: 1,
+              angle: 0,
             ),
-            position: const ui.Offset(0, 0),
-            scale: 1,
-            angle: 0,
           ),
+          separatorBuilder: (BuildContext context, int index) => const SizedBox(
+            width: 8,
+          ),
+          itemCount: settings.stickerList.length,
         ),
-        separatorBuilder: (BuildContext context, int index) => const SizedBox(
-          width: 8,
-        ),
-        itemCount: settings.stickerList.length,
       ),
     );
-  }
-
-  void showColorPicker() {
-    SettingsProvider settings =
-        Provider.of<SettingsProvider>(context, listen: false);
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return BrushSettingsDialog(
-            initBrushColor: settings.brushColor,
-            onAddSwatch: (color) {
-              settings.brushColor = color;
-              settings.addSwatch(color);
-            },
-          );
-        });
   }
 }

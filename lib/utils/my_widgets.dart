@@ -51,51 +51,6 @@ class MyRoundBox extends StatelessWidget {
   }
 }
 
-class MySwatch extends StatelessWidget {
-  final Color color;
-  final bool isSelected;
-  final void Function() onPressed;
-  final void Function() onLongPressed;
-  const MySwatch({
-    super.key,
-    required this.color,
-    required this.isSelected,
-    required this.onPressed,
-    required this.onLongPressed,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // expensive, may not be needed
-    bool isVeryBright = color.computeLuminance() > 0.9;
-    return GestureDetector(
-      onTap: onPressed,
-      onLongPress: onLongPressed,
-      child: MyRoundBox(
-        diameter: 36,
-        color: Colors.white,
-        child: Center(
-          child: Center(
-            child: MyRoundBox(
-              diameter: 28,
-              color: color,
-              child: isSelected
-                  ? Center(
-                      child: MyRoundBox(
-                        // visually the same size
-                        diameter: isVeryBright ? 10 : 8,
-                        color: isVeryBright ? Colors.black38 : Colors.white,
-                      ),
-                    )
-                  : null,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class MyTextButton extends StatelessWidget {
   final String text;
   final double? fontSize = 16;
