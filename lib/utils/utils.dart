@@ -54,7 +54,7 @@ class MyTextButton extends StatelessWidget {
   final String text;
   final double? fontSize = 16;
   final void Function()? onPressed;
-  const MyTextButton({super.key, required this.text, required this.onPressed});
+  const MyTextButton({super.key, required this.text, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -67,5 +67,19 @@ class MyTextButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+extension GlobalKeyExtension on GlobalKey {
+  Offset? get globalPaintBounds {
+    final renderObject = currentContext?.findRenderObject();
+    final translation = renderObject?.getTransformTo(null).getTranslation();
+    if (translation != null && renderObject?.paintBounds != null) {
+      // final offset = Offset(translation.x, translation.y);
+      // return renderObject!.paintBounds.shift(offset);
+      return Offset(translation.x, translation.y);
+    } else {
+      return null;
+    }
   }
 }

@@ -6,7 +6,7 @@ import 'package:winter_wolf/utils/save_to_gallery.dart';
 import '../features/action_bar.dart';
 import '../features/drawing_mode_nav_bar.dart';
 import '../features/tools_contents.dart';
-import '../utils/my_widgets.dart';
+import '../utils/utils.dart';
 
 class DrawingAppMainScreen extends StatefulWidget {
   const DrawingAppMainScreen({super.key});

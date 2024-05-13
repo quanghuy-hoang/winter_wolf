@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winter_wolf/models/settings.dart';
 
-import '../utils/my_widgets.dart';
+import '../utils/utils.dart';
 
 enum DrawingMode { drawLine, erase, sticker, paint, drawPoint }
 

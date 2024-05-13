@@ -70,6 +70,7 @@ flutter:
      - assets/images/usagi.png
      - assets/images/usagi_2.png
      - assets/images/momonga.png
+     - assets/images/tall_image.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
