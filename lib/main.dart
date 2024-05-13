@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winter_wolf/models/painting.dart';
+import 'package:winter_wolf/screens/drawing_app_main_screen.dart';
 
-import 'screens/drawing_app_main_screen.dart';
 import 'models/settings.dart';
 
 void main() {

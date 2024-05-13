@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hsvcolor_picker/flutter_hsvcolor_picker.dart';
 
-import '../utils/my_widgets.dart';
+import '../utils/utils.dart';
 
 class BrushSettingsDialog extends StatefulWidget {
   final Color initBrushColor;

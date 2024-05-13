@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:winter_wolf/features/sticker_on_canvas.dart';
@@ -13,18 +11,17 @@ import 'my_line_painter.dart';
 
 class CanvasZone extends StatelessWidget {
   final GlobalKey globalKey;
-  final SettingsProvider settings;
   final double canvasSize;
   const CanvasZone({
     super.key,
     required this.globalKey,
-    required this.settings,
     required this.canvasSize,
   });
 
   @override
   Widget build(BuildContext context) {
-    final painting = context.watch<PaintingProvider>();
+    final SettingsProvider settings = context.read<SettingsProvider>();
+    final PaintingProvider painting = context.watch<PaintingProvider>();
 
     return RepaintBoundary(
       key: globalKey,
@@ -37,25 +34,27 @@ class CanvasZone extends StatelessWidget {
                 if (settings.mode == DrawingMode.sticker) {
                   return;
                 }
-                painting.clearUndoLine();
-                painting.addLine(
-                  DrawingLine(
-                    mode: settings.mode,
-                    points: [details.localPosition],
-                    paint: Paint()
-                      ..color = settings.brushColor
-                      ..strokeWidth = settings.brushSize
-                      ..strokeJoin = StrokeJoin.round
-                      ..strokeCap = StrokeCap.round
-                      ..style = PaintingStyle.stroke,
-                  ),
-                );
+                context.read<PaintingProvider>().clearUndoLine();
+                context.read<PaintingProvider>().addLine(
+                      DrawingLine(
+                        mode: settings.mode,
+                        points: [details.localPosition],
+                        paint: Paint()
+                          ..color = settings.brushColor
+                          ..strokeWidth = settings.brushSize
+                          ..strokeJoin = StrokeJoin.round
+                          ..strokeCap = StrokeCap.round
+                          ..style = PaintingStyle.stroke,
+                      ),
+                    );
               },
               onPanUpdate: (details) {
                 if (settings.mode == DrawingMode.sticker) {
                   return;
                 }
-                painting.updateLastLine(details.localPosition);
+                context
+                    .read<PaintingProvider>()
+                    .updateLastLine(details.localPosition);
               },
               behavior: HitTestBehavior.translucent,
               child: CustomPaint(
@@ -98,43 +97,11 @@ class CanvasZone extends StatelessWidget {
                   Offset(details.offset.dx, details.offset.dy);
             },
             onAcceptWithDetails: (DragTargetDetails<StickerOnCanvas> details) {
-              painting.addSticker(details.data);
+              context.read<PaintingProvider>().addSticker(details.data);
             },
           ),
-          buildBrushSizePreview(canvasSize),
         ],
       ),
     );
-  }
-
-  Widget buildBrushSizePreview(double canvasSize) {
-    if (!settings.displayBrushPreview) {
-      return const SizedBox.shrink();
-    }
-
-    return Consumer<SettingsProvider>(builder: (context, settings, child) {
-      return SizedBox(
-        width: canvasSize,
-        height: canvasSize,
-        child: Center(
-          child: Container(
-            width: settings.brushSize,
-            height: settings.brushSize,
-            decoration: BoxDecoration(
-              color: context
-                  .select((SettingsProvider painting) => painting.brushColor),
-              shape: BoxShape.circle,
-              border: Border.all(
-                strokeAlign: BorderSide.strokeAlignOutside,
-                color: settings.mode == DrawingMode.erase
-                    ? Colors.grey.shade600
-                    : Colors.grey.shade100,
-                width: settings.brushSize / 16,
-              ),
-            ),
-          ),
-        ),
-      );
-    });
   }
 }

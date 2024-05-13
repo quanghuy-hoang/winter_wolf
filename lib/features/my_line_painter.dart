@@ -12,11 +12,8 @@ class MyLinePainter extends CustomPainter {
     final rect = Rect.fromLTWH(0, 0, size.width, size.height);
     canvas.clipRect(rect);
 
-    int count = 0;
-
     for (var line in lines) {
       int pointCount = line.points.length;
-      count += pointCount;
       for (var i = 0; i < pointCount; i++) {
         Offset currentPoint = line.points[i];
         Offset? nextPoint = i != pointCount - 1 ? line.points[i + 1] : null;
@@ -34,7 +31,6 @@ class MyLinePainter extends CustomPainter {
         }
       }
     }
-    print(count);
   }
 
   @override
