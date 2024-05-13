@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:winter_wolf/screens/drawing_app_main_screen.dart';
 import 'package:winter_wolf/utils/utils.dart';
 
 class ResultScreen extends StatefulWidget {
